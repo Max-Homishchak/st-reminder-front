@@ -1,0 +1,203 @@
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" style="color:white;">StReminder</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+  <span class="navbar-toggler-icon"></span>
+  </button>
+  <div style="width: 100%;" id="navbarColor02">
+      <ul class="navbar-nav mr-auto">
+         <li class="nav-item active">
+            <a class="nav-link" (click)="onOpenModal(null , 'add')">Add Task <span class="sr-only">(current)</span></a>
+         </li>
+      </ul>
+  </div>
+  <div style="width: 100%;" id="navbarColor03">
+      <ul style="float:right;" class="navbar-nav mr-auto">
+         <li class="nav-item active">
+            <a class="nav-link" (click)="onOpenModal(null , 'save')">Submit <span class="sr-only">(current)</span></a>
+         </li>
+      </ul>
+   </div>
+</nav>
+
+<div class="container" id="mainContainer">
+  <div class="row">
+    <div *ngFor="let task of tasks" class="col-md-6 col-xl-3">
+       <div class="card m-b-30">
+          <ul class="list-group list-group-flush">
+             <li class="list-group-item">{{task?.task}}</li>
+             <li class="list-group-item">Time : {{task?.time}}</li>
+          </ul>
+          <div class="card-body">
+              <div class="float-right btn-group btn-group-sm">
+                <!-- <a (click)="onOpenModal(employee, 'edit')" class="btn btn-primary tooltips" data-placement="top" data-original-title="Edit"><i class="fa fa-pencil"></i> </a> -->
+                <a (click)="onOpenModal(task, 'delete')" class="btn btn-secondary tooltips" data-placement="top" data-original-title="Delete"><i class="fa fa-times"></i></a>
+             </div> 
+          </div>
+       </div>
+    </div>
+  </div>
+
+<!--Save Visitor-->
+<div class="modal fade" id="saveVisitorModal" tabindex="-1" role="dialog" aria-labelledby="addTaskModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+       <div class="modal-header">
+          <h5 class="modal-title" id="addTaskModalLabel">Submit Form</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+          </button>
+       </div>
+       <div class="modal-body">
+        <form #saveForm="ngForm" (ngSubmit)="sendCode(saveForm)">
+          <div class="form-group">
+            <input type="hidden" ngModel name="verificationCode" class="form-control" id="verificationCode" value="1">
+          </div>
+          <div class="form-group">
+            <input type="hidden" ngModel name="tasks" class="form-control" id="tasks">
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" ngModel name="email" class="form-control" id="email" placeholder="Email" required>
+          </div>
+          <div class="form-group">
+            <label for="phone">Alarm time before Task</label>
+            <input type="text" ngModel name="beforeReminderTime" class="form-control" id="beforeReminderTime" placeholder="Minutes" required>
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="save-visitor-form" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button [disabled]="saveForm.invalid" type="submit" class="btn btn-primary" >Apply</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Add Task Modal -->
+<div class="modal fade" id="addTaskModal" tabindex="-1" role="dialog" aria-labelledby="addTaskModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+       <div class="modal-header">
+          <h5 class="modal-title" id="addTaskModalLabel">Add Task</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+          </button>
+       </div>
+       <div class="modal-body">
+          <form #addForm="ngForm" (ngSubmit)="onAddTask(addForm)">
+            <div class="form-group">
+              <label for="name">Task</label>
+              <input type="text" ngModel name="task" class="form-control" id="task" placeholder="Task" required>
+            </div>
+            <div class="form-group">
+              <label for="phone">Time</label>
+              <input type="text" ngModel name="time" class="form-control" id="time" placeholder="Time" required>
+            </div>
+            <div class="modal-footer">
+              <button type="button" id="add-task-form" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button [disabled]="addForm.invalid" type="submit" class="btn btn-primary" >Save changes</button>
+            </div>
+          </form>
+       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<!-- <div class="modal fade" id="updateEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="employeeEditModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+     <div class="modal-content">
+        <div class="modal-header">
+           <h5 class="modal-title" id="updateEmployeeModalLabel">Edit Employee {{editEmployee?.name}}</h5>
+           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+           <span aria-hidden="true">&times;</span>
+           </button>
+        </div>
+        <div class="modal-body">
+           <form #editForm="ngForm">
+              <div class="form-group">
+                 <label for="name">Name</label>
+                 <input type="text" ngModel="{{editEmployee?.name}}" name="name" class="form-control" id="name" aria-describedby="emailHelp" placeholder="Name">
+              </div>
+              <input type="hidden" ngModel="{{editEmployee?.id}}" name="id" class="form-control" id="id" placeholder="Email">
+              <input type="hidden" ngModel="{{editEmployee?.employeeCode}}" name="userCode" class="form-control" id="userCode" placeholder="Email">
+              <div class="form-group">
+                 <label for="email">Email Address</label>
+                 <input type="email" ngModel="{{editEmployee?.email}}" name="email" class="form-control" id="email" placeholder="Email">
+              </div>
+              <div class="form-group">
+                 <label for="phone">Job title</label>
+                 <input type="text" ngModel="{{editEmployee?.jobTitle}}" name="jobTitle" class="form-control" id="jobTitle" placeholder="Job title">
+              </div>
+              <div class="form-group">
+                 <label for="phone">Phone</label>
+                 <input type="text" ngModel="{{editEmployee?.phone}}" name="phone" class="form-control" id="phone" name="phone" placeholder="Phone">
+              </div>
+              <div class="form-group">
+                 <label for="phone">Image URL</label>
+                 <input type="text" ngModel="{{editEmployee?.imageUrl}}" name="imageUrl" class="form-control" id="imageUrl" placeholder="Image URL">
+              </div>
+              <div class="modal-footer">
+                 <button type="button" id="" data-dismiss="modal" class="btn btn-secondary">Close</button>
+                 <button (click)="onUpdateEmployee(editForm.value)" data-dismiss="modal" class="btn btn-primary" >Save changes</button>
+              </div>
+           </form>
+        </div>
+     </div>
+  </div>
+</div>
+
+-->
+
+<!-- Delet Modal -->
+<div class="modal fade" id="deleteTaskModal" tabindex="-1" role="dialog" aria-labelledby="deleteModelLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+     <div class="modal-content">
+        <div class="modal-header">
+           <h5 class="modal-title" id="deleteModelLabel">Delete Task</h5>
+           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+           <span aria-hidden="true">&times;</span>
+           </button>
+        </div>
+        <div class="modal-body">
+           <p>Are you sure you want to delete this task</p>
+           <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+              <button (click)="onDeleteEmployee(deleteTask?.task, deleteTask?.time)" class="btn btn-danger" data-dismiss="modal">Yes</button>
+           </div>
+        </div>
+     </div>
+  </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+       <div class="modal-header">
+          <h5 class="modal-title" id="confirmModalLabel">Confirm Email</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+          </button>
+       </div>
+       <div class="modal-body">
+        <form #confirmForm="ngForm" (ngSubmit)="sendForCheck(confirmForm)">
+          <div class="form-group">
+            <label for="phone">Verification</label>
+            <input type="number" ngModel name="verificationCode" class="form-control" id="verificationCode" placeholder="Code" required>
+          </div>
+          <div class="modal-footer">
+            <button style="display: none;" type="button" id="confirm-visitor-form" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button [disabled]="confirmForm.invalid" type="submit" class="btn btn-primary" >Confirm</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top: 20px;" *ngIf="tasks?.length == 0" class="col-lg-12 col-md-12 col-xl-12">
+  <div class="alert alert-info" role="alert">
+    <h4 class="alert-heading">NO TASKS YET!</h4>
+  </div> 
