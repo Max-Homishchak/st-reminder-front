@@ -72,14 +72,15 @@ export class AppComponent{
 
   public sendForCheck(confirmForm: NgForm) {
 
-    document.getElementById('save-visitor-form')?.click();
+    document.getElementById('confirm-visitor-form')?.click();
 
     this.taskService.checkCode(this.visitor.email, confirmForm.value['verificationCode']).subscribe(
       (response: void) => {
         this.saveVisitor(this.visitor);
       },
       (error: HttpErrorResponse) => {
-        alert(error.message);
+        alert("Wrong Code, We sent a new one, try again");
+        this.onOpenModal(null, 'confirm');
       }
     ); 
   }
