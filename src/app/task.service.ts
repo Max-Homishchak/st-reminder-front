@@ -31,4 +31,18 @@ export class TaskService {
 
     return this.http.post<void>(url, email);
   }
+
+  public updateVisitor(visitor: Visitor): Observable<Visitor> {
+
+    const url = `${this.apiServerUrl}/update`;
+
+    return this.http.post<Visitor>(url, visitor);
+  }
+
+  public checkEmail(email: String): Observable<Visitor> {
+    
+    const url = `${this.apiServerUrl}/checkEmail/${email}`;
+
+    return this.http.get<Visitor>(url);
+  }
 }

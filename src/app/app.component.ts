@@ -50,7 +50,7 @@ export class AppComponent{
     addForm.reset();
   }
 
-  public onDeleteEmployee(task: String | undefined, time: string | undefined): void{
+  public onDeleteTask(task: String | undefined, time: string | undefined): void{
 
     let taskToDelete = this.tasks.find((obj) => {
       return obj.task === task && obj.time === time;
@@ -76,13 +76,34 @@ export class AppComponent{
 
     this.taskService.checkCode(this.visitor.email, confirmForm.value['verificationCode']).subscribe(
       (response: void) => {
-        this.saveVisitor(this.visitor);
+
+        this.taskService.checkEmail(this.visitor.email).subscribe(
+          (response: Visitor) => {
+            this.onOpenModal(null, 'duplicate');
+          },
+          (error: HttpErrorResponse) => {
+            this.saveVisitor(this.visitor);
+          }
+        )
       },
       (error: HttpErrorResponse) => {
         alert("Wrong Code, We sent a new one, try again");
         this.onOpenModal(null, 'confirm');
       }
     ); 
+  }
+
+  changeDublicateVisitor(visitor: Visitor) {
+
+    this.taskService.updateVisitor(visitor).subscribe(
+      (response: Visitor) => {
+        this.refresh();
+        alert("You have updated user");
+      },
+      (error: HttpErrorResponse) => {
+        alert(error.message);
+      }
+    )
   }
 
   public onOpenModal(task: Task | null, mode: string): void{
@@ -105,6 +126,8 @@ export class AppComponent{
       button.setAttribute('data-target', '#saveVisitorModal')
     }else if(mode === 'confirm') {
       button.setAttribute('data-target', '#confirmModal')
+    }else if(mode === 'duplicate') {
+      button.setAttribute('data-target', '#dublicateModal')
     }
 
     container?.appendChild(button);
